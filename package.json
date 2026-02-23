@@ -1,15 +1,24 @@
 {
   "name": "production-auth-system",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Production-ready authentication system with JWT, refresh tokens, email verification and role-based access",
+  "type": "module",
+  "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "authentication",
+    "jwt",
+    "nodejs",
+    "express",
+    "mongodb",
+    "security",
+    "backend"
+  ],
+  "author": "Lan Gojkovič",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
