@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
-import { me, logout } from "./lib/auth.js";
-import { bootstrapSession } from "./lib/auth.js";
+import VerifyEmail from "./pages/VerifyEmail.jsx";
+import ForgotPassword from "./pages/ForgotPassword.js";
+import ResetPassword from "./pages/ResetPassword.js";
+import { bootstrapSession, logout } from "./lib/auth.js";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -68,8 +70,15 @@ export default function App() {
           path="/"
           element={<Navigate to={user ? "/dashboard" : "/login"} />}
         />
+
         <Route path="/login" element={<Login onAuthed={(u) => setUser(u)} />} />
         <Route path="/register" element={<Register />} />
+
+        {/* ✅ Email flows */}
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+
         <Route
           path="/dashboard"
           element={user ? <Dashboard user={user} /> : <Navigate to="/login" />}
