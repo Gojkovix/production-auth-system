@@ -6,7 +6,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import VerifyEmail from "./pages/VerifyEmail.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
-import { bootstrapSession, logout } from "./lib/auth.jsx";
+import { bootstrapSession, logout } from "./lib/auth.js";
 
 export default function App() {
   const [user, setUser] = useState(null);
