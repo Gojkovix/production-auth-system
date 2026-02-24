@@ -10,16 +10,22 @@ export default function App() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    let alive = true;
+
     (async () => {
       try {
-        const u = await me();
-        setUser(u);
+        const u = await me(); // will 401 if not logged in -> caught
+        if (alive) setUser(u);
       } catch {
-        setUser(null);
+        if (alive) setUser(null);
       } finally {
-        setReady(true);
+        if (alive) setReady(true);
       }
     })();
+
+    return () => {
+      alive = false;
+    };
   }, []);
 
   if (!ready) return <div className="p-4">Loading...</div>;
@@ -59,9 +65,7 @@ export default function App() {
       <Routes>
         <Route
           path="/"
-          element={
-            user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
-          }
+          element={<Navigate to={user ? "/dashboard" : "/login"} />}
         />
         <Route path="/login" element={<Login onAuthed={(u) => setUser(u)} />} />
         <Route path="/register" element={<Register />} />
