@@ -1,35 +1,75 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import { me, logout } from "./lib/auth.js";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const u = await me();
+        setUser(u);
+      } catch {
+        setUser(null);
+      } finally {
+        setReady(true);
+      }
+    })();
+  }, []);
+
+  if (!ready) return <div className="p-4">Loading...</div>;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <BrowserRouter>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div className="container">
+          <Link className="navbar-brand" to="/">
+            Auth System
+          </Link>
+          <div className="d-flex gap-2">
+            {!user ? (
+              <>
+                <Link className="btn btn-outline-light btn-sm" to="/login">
+                  Login
+                </Link>
+                <Link className="btn btn-warning btn-sm" to="/register">
+                  Register
+                </Link>
+              </>
+            ) : (
+              <button
+                className="btn btn-outline-light btn-sm"
+                onClick={async () => {
+                  await logout();
+                  setUser(null);
+                }}
+              >
+                Logout
+              </button>
+            )}
+          </div>
+        </div>
+      </nav>
 
-export default App
+      <Routes>
+        <Route
+          path="/"
+          element={
+            user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
+          }
+        />
+        <Route path="/login" element={<Login onAuthed={(u) => setUser(u)} />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/dashboard"
+          element={user ? <Dashboard /> : <Navigate to="/login" />}
+        />
+      </Routes>
+    </BrowserRouter>
+  );
+}
