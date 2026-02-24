@@ -1,16 +1,7 @@
 import { useEffect, useState } from "react";
 import { me } from "../lib/auth.js";
 
-export default function Dashboard() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    (async () => {
-      const u = await me();
-      setUser(u);
-    })();
-  }, []);
-
+export default function Dashboard({ user }) {
   return (
     <div className="container py-5">
       <div className="row g-4">

@@ -4,6 +4,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import { me, logout } from "./lib/auth.js";
+import { bootstrapSession } from "./lib/auth.js";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -14,7 +15,7 @@ export default function App() {
 
     (async () => {
       try {
-        const u = await me(); // will 401 if not logged in -> caught
+        const u = await bootstrapSession();
         if (alive) setUser(u);
       } catch {
         if (alive) setUser(null);
@@ -71,7 +72,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route
           path="/dashboard"
-          element={user ? <Dashboard /> : <Navigate to="/login" />}
+          element={user ? <Dashboard user={user} /> : <Navigate to="/login" />}
         />
       </Routes>
     </BrowserRouter>

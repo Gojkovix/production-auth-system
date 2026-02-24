@@ -1,5 +1,12 @@
 import { api, setAccessToken } from "./api";
 
+export async function bootstrapSession() {
+  const r = await api.post("/auth/refresh");
+  setAccessToken(r.data.accessToken);
+  const meRes = await api.get("/user/me");
+  return meRes.data.user;
+}
+
 export async function login(email, password) {
   const r = await api.post("/auth/login", { email, password });
   setAccessToken(r.data.accessToken);
