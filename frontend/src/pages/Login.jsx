@@ -59,6 +59,9 @@ export default function Login({ onAuthed }) {
           <div className="mt-3 text-muted small">
             No account? <Link to="/register">Create one</Link>
           </div>
+          <div className="mt-2 text-muted small">
+            Forgot password? <Link to="/forgot-password">Reset</Link>
+          </div>
         </div>
       </div>
     </div>
