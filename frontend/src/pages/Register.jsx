@@ -26,6 +26,7 @@ export default function Register() {
             <label className="form-label">Email</label>
             <input
               className="form-control"
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -48,11 +49,21 @@ export default function Register() {
               setErr("");
               setOk(false);
               setLoading(true);
+
               try {
                 await register(email, password);
                 setOk(true);
               } catch (e) {
-                setErr(e?.response?.data?.error || "Register failed");
+                const data = e?.response?.data;
+
+                const msg =
+                  data?.error ||
+                  (Array.isArray(data?.details) && data.details.length
+                    ? data.details.map((d) => d.message).join(", ")
+                    : null) ||
+                  "Register failed";
+
+                setErr(msg);
               } finally {
                 setLoading(false);
               }
