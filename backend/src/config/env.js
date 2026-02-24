@@ -1,45 +1,45 @@
-import dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config";
+
+function req(key) {
+  const v = process.env[key];
+  if (!v) throw new Error(`Missing env var: ${key}`);
+  return v;
+}
+
+function opt(key, fallback = undefined) {
+  const v = process.env[key];
+  return v ?? fallback;
+}
 
 export const env = {
-  nodeEnv: process.env.NODE_ENV || "development",
-  port: Number(process.env.PORT || 5000),
+  nodeEnv: opt("NODE_ENV", "development"),
+  port: Number(opt("PORT", "5000")),
 
-  mongoUri: process.env.MONGO_URI,
+  mongoUri: req("MONGO_URI"),
 
-  appUrl: process.env.APP_URL,
-  apiUrl: process.env.API_URL,
+  appUrl: opt("APP_URL", "http://localhost:5173"),
+  apiUrl: opt("API_URL", "http://localhost:5000"),
 
-  jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
-  jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
-  accessTtl: process.env.ACCESS_TOKEN_TTL || "15m",
-  refreshTtl: process.env.REFRESH_TOKEN_TTL || "30d",
-
-  cookieNameRefresh: process.env.COOKIE_NAME_REFRESH || "refresh_token",
-
-  smtp: {
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 465),
-    secure: String(process.env.SMTP_SECURE || "true") === "true",
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-    from: process.env.MAIL_FROM,
-  },
-
-  corsOrigins: (process.env.CORS_ORIGINS || "")
+  corsOrigins: opt("CORS_ORIGINS", "http://localhost:5173")
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean),
+
+  jwtAccessSecret: req("JWT_ACCESS_SECRET"),
+  jwtRefreshSecret: req("JWT_REFRESH_SECRET"),
+
+  // MAIL CONFIG
+  mailMode: opt("MAIL_MODE", "dev"), // "dev" | "smtp"
+  smtpHost: opt("SMTP_HOST"),
+  smtpPort: Number(opt("SMTP_PORT", "465")),
+  smtpSecure: String(opt("SMTP_SECURE", "true")) === "true",
+  smtpUser: opt("SMTP_USER"),
+  smtpPass: opt("SMTP_PASS"),
+  mailFrom: opt("MAIL_FROM"),
 };
 
-const required = [
-  "mongoUri",
-  "jwtAccessSecret",
-  "jwtRefreshSecret",
-  "appUrl",
-  "apiUrl",
-];
-
-for (const key of required) {
-  if (!env[key]) throw new Error(`Missing env var: ${key}`);
+if (env.mailMode === "smtp") {
+  if (!env.smtpHost || !env.smtpUser || !env.smtpPass) {
+    throw new Error("MAIL_MODE=smtp but SMTP_* vars are missing");
+  }
 }
