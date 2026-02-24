@@ -47,7 +47,7 @@ export default function VerifyEmail() {
 
       <div className="mt-3">
         <Link to="/login" className="btn btn-dark btn-sm">
-          Go to login
+          Go to login 
         </Link>
       </div>
     </div>
