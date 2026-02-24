@@ -4,9 +4,9 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import VerifyEmail from "./pages/VerifyEmail.jsx";
-import ForgotPassword from "./pages/ForgotPassword.js";
-import ResetPassword from "./pages/ResetPassword.js";
-import { bootstrapSession, logout } from "./lib/auth.js";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
+import { bootstrapSession, logout } from "./lib/auth.jsx";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -74,7 +74,7 @@ export default function App() {
         <Route path="/login" element={<Login onAuthed={(u) => setUser(u)} />} />
         <Route path="/register" element={<Register />} />
 
-        {/* ✅ Email flows */}
+        {/* Email flows */}
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
