@@ -1,15 +1,12 @@
 import { api, setAccessToken } from "./api";
 
 // Auth
-export async function login(email, password) {
-  const r = await api.post("/auth/login", { email, password });
-  setAccessToken(r.data.accessToken);
-  return r.data.user;
+export function register(email, password) {
+  return api.post("/auth/register", { email, password });
 }
 
-export async function register(email, password) {
-  const r = await api.post("/auth/register", { email, password });
-  return r.data;
+export function login(email, password) {
+  return api.post("/auth/login", { email, password });
 }
 
 export async function logout() {
@@ -39,12 +36,10 @@ export async function verifyEmail(token) {
   return r.data;
 }
 
-export async function forgotPassword(email) {
-  const r = await api.post("/auth/forgot-password", { email });
-  return r.data;
+export function forgotPassword(email) {
+  return api.post("/auth/forgot-password", { email });
 }
 
-export async function resetPassword(token, password) {
-  const r = await api.post("/auth/reset-password", { token, password });
-  return r.data;
+export async function resetPassword(token, newPassword) {
+  return api.post("/auth/reset-password", { token, newPassword });
 }

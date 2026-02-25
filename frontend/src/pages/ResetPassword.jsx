@@ -1,24 +1,29 @@
-import { useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { resetPassword } from "../lib/auth.js";
 
 export default function ResetPassword() {
-  const [params] = useSearchParams();
-  const token = params.get("token");
+  const [sp] = useSearchParams();
+  const token = sp.get("token") || "";
 
-  const [password, setPassword] = useState("");
-  const [state, setState] = useState({ ok: false, err: "", loading: false });
+  const [newPassword, setNewPassword] = useState("");
+  const [ok, setOk] = useState(false);
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
 
   return (
     <div className="container py-5" style={{ maxWidth: 520 }}>
       <h1 className="h3 mb-3">Reset password</h1>
 
-      {!token && <div className="alert alert-danger">Missing token.</div>}
-      {state.err && <div className="alert alert-danger">{state.err}</div>}
-      {state.ok && (
+      {err && <div className="alert alert-danger">{err}</div>}
+      {ok && (
         <div className="alert alert-success">
-          Password updated. <Link to="/login">Login</Link>
+          Password updated. <Link to="/login">Go to login</Link>
         </div>
+      )}
+
+      {!token && (
+        <div className="alert alert-warning">Missing token in URL.</div>
       )}
 
       <div className="card shadow-sm">
@@ -28,30 +33,29 @@ export default function ResetPassword() {
             <input
               className="form-control"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={!token}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
             />
           </div>
 
           <button
             className="btn btn-dark w-100"
-            disabled={!token || state.loading}
+            disabled={loading || !token}
             onClick={async () => {
-              setState({ ok: false, err: "", loading: true });
+              setErr("");
+              setOk(false);
+              setLoading(true);
               try {
-                await resetPassword(token, password);
-                setState({ ok: true, err: "", loading: false });
+                await resetPassword(token, newPassword);
+                setOk(true);
               } catch (e) {
-                setState({
-                  ok: false,
-                  err: e?.response?.data?.error || "Reset failed",
-                  loading: false,
-                });
+                setErr(e?.response?.data?.error || "Request failed");
+              } finally {
+                setLoading(false);
               }
             }}
           >
-            {state.loading ? "Updating..." : "Update password"}
+            {loading ? "Updating..." : "Update password"}
           </button>
 
           <div className="mt-3 text-muted small">

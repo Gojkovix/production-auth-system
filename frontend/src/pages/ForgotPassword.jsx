@@ -4,17 +4,18 @@ import { Link } from "react-router-dom";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [state, setState] = useState({ ok: false, err: "", loading: false });
+  const [ok, setOk] = useState(false);
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
 
   return (
     <div className="container py-5" style={{ maxWidth: 520 }}>
       <h1 className="h3 mb-3">Forgot password</h1>
 
-      {state.err && <div className="alert alert-danger">{state.err}</div>}
-      {state.ok && (
+      {err && <div className="alert alert-danger">{err}</div>}
+      {ok && (
         <div className="alert alert-success">
-          If the email exists, a reset link was sent. (In dev mode you’ll see
-          the link in backend console.)
+          If the email exists, a reset link was sent.
         </div>
       )}
 
@@ -31,22 +32,22 @@ export default function ForgotPassword() {
 
           <button
             className="btn btn-warning w-100"
-            disabled={state.loading}
+            disabled={loading}
             onClick={async () => {
-              setState({ ok: false, err: "", loading: true });
+              setErr("");
+              setOk(false);
+              setLoading(true);
               try {
                 await forgotPassword(email);
-                setState({ ok: true, err: "", loading: false });
+                setOk(true);
               } catch (e) {
-                setState({
-                  ok: false,
-                  err: e?.response?.data?.error || "Request failed",
-                  loading: false,
-                });
+                setErr(e?.response?.data?.error || "Request failed");
+              } finally {
+                setLoading(false);
               }
             }}
           >
-            {state.loading ? "Sending..." : "Send reset link"}
+            {loading ? "Sending..." : "Send reset link"}
           </button>
 
           <div className="mt-3 text-muted small">
