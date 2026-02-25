@@ -53,11 +53,13 @@ function clearRefreshCookie(res) {
 
 const adminEmails = ["langojkovic.dev@gmail.com"];
 
-const role = adminEmails.includes(email.toLowerCase()) ? "admin" : "user";
-
+function resolveRole(email) {
+  return adminEmails.includes(String(email).toLowerCase()) ? "admin" : "user";
+}
 
 export async function register(req, res) {
   const { email, password } = req.body;
+  const role = resolveRole(email);
 
   const existing = await User.findOne({ email });
   if (existing) return res.status(409).json({ error: "Email already in use" });
@@ -69,6 +71,7 @@ export async function register(req, res) {
   const user = await User.create({
     email,
     passwordHash,
+    role,
     verifyEmailTokenHash: tokenHash,
     verifyEmailTokenExp: exp,
   });
@@ -91,6 +94,12 @@ export async function login(req, res) {
 
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) return res.status(401).json({ error: "Invalid credentials" });
+
+  const desiredRole = resolveRole(email);
+  if (user.role !== desiredRole) {
+    user.role = desiredRole;
+    await user.save();
+  }
 
   const accessToken = signAccessToken(user);
   const refreshJwt = signRefreshTokenJwt(user);
