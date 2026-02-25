@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import { env } from "./config/env.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
-import User from "../models/User.js";
+import User from "./models/User.js";
 import { z } from "zod";
 import adminRoutes from "./routes/admin.routes.js";
 
