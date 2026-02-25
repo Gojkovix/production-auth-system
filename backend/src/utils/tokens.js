@@ -6,7 +6,7 @@ export function signAccessToken(user) {
   return jwt.sign(
     { sub: String(user._id), role: user.role },
     env.jwtAccessSecret,
-    { expiresIn: env.accessTtl },
+    { expiresIn: env.jwtAccessExpiresIn },
   );
 }
 
@@ -14,7 +14,7 @@ export function signRefreshTokenJwt(user) {
   return jwt.sign(
     { sub: String(user._id), typ: "refresh" },
     env.jwtRefreshSecret,
-    { expiresIn: env.refreshTtl },
+    { expiresIn: env.jwtRefreshExpiresIn },
   );
 }
 

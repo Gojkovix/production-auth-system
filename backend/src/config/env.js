@@ -27,6 +27,8 @@ export const env = {
 
   jwtAccessSecret: req("JWT_ACCESS_SECRET"),
   jwtRefreshSecret: req("JWT_REFRESH_SECRET"),
+  jwtAccessExpiresIn: opt("JWT_ACCESS_EXPIRES_IN", "15m"),
+  jwtRefreshExpiresIn: opt("JWT_REFRESH_EXPIRES_IN", "7d"),
 
   // MAIL CONFIG
   mailMode: opt("MAIL_MODE", "dev"), // "dev" | "smtp"
