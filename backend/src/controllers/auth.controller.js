@@ -55,12 +55,6 @@ const adminEmails = ["langojkovic.dev@gmail.com"];
 
 const role = adminEmails.includes(email.toLowerCase()) ? "admin" : "user";
 
-const user = await User.create({
-  email: email.toLowerCase(),
-  passwordHash,
-  role,
-  emailVerified: false,
-});
 
 export async function register(req, res) {
   const { email, password } = req.body;

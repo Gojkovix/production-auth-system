@@ -1,4 +1,4 @@
-import User from "../models/User.js";
+import { User } from "../models/User.js";
 import { z } from "zod";
 
 export async function listUsers(req, res) {
