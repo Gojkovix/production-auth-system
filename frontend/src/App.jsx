@@ -85,7 +85,7 @@ export default function App() {
         <Route
           path="/admin"
           element={
-            session?.role === "admin" ? <Admin /> : <Navigate to="/dashboard" />
+            user?.role === "admin" ? <Admin /> : <Navigate to="/dashboard" />
           }
         />
 
