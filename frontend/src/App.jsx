@@ -7,6 +7,7 @@ import VerifyEmail from "./pages/VerifyEmail.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import { bootstrapSession, logout } from "./lib/auth.js";
+import Admin from "./pages/Admin.jsx";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -49,6 +50,14 @@ export default function App() {
                 <Link className="btn btn-warning btn-sm" to="/register">
                   Register
                 </Link>
+                {session?.role === "admin" && (
+                  <Link
+                    className="btn btn-outline-light btn-sm me-2"
+                    to="/admin"
+                  >
+                    Admin
+                  </Link>
+                )}
               </>
             ) : (
               <button
@@ -73,6 +82,12 @@ export default function App() {
 
         <Route path="/login" element={<Login onAuthed={(u) => setUser(u)} />} />
         <Route path="/register" element={<Register />} />
+        <Route
+          path="/admin"
+          element={
+            session?.role === "admin" ? <Admin /> : <Navigate to="/dashboard" />
+          }
+        />
 
         {/* Email flows */}
         <Route path="/verify-email" element={<VerifyEmail />} />
