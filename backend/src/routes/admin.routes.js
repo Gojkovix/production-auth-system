@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { auth } from "../middleware/auth.js";
+import { requireAuth } from "../middleware/auth.js";
 import { requireRole } from "../middleware/requireRole.js";
 import {
   listUsers,
@@ -9,7 +9,7 @@ import {
 
 const r = Router();
 
-r.use(auth);
+r.use(requireAuth);
 r.use(requireRole("admin"));
 
 r.get("/users", listUsers);
