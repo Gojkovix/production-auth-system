@@ -1,14 +1,14 @@
 import { useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { resetPassword } from "../lib/auth.js";
 
 export default function ResetPassword() {
   const [sp] = useSearchParams();
-  const token = sp.get("token") || "";
+  const token = useMemo(() => sp.get("token") || "", [sp]);
 
   const [newPassword, setNewPassword] = useState("");
-  const [ok, setOk] = useState(false);
   const [err, setErr] = useState("");
+  const [ok, setOk] = useState(false);
   const [loading, setLoading] = useState(false);
 
   return (
@@ -40,7 +40,7 @@ export default function ResetPassword() {
 
           <button
             className="btn btn-dark w-100"
-            disabled={loading || !token}
+            disabled={loading || !token || newPassword.length < 8}
             onClick={async () => {
               setErr("");
               setOk(false);
@@ -49,7 +49,7 @@ export default function ResetPassword() {
                 await resetPassword(token, newPassword);
                 setOk(true);
               } catch (e) {
-                setErr(e?.response?.data?.error || "Request failed");
+                setErr(e?.response?.data?.error || "Reset failed");
               } finally {
                 setLoading(false);
               }
