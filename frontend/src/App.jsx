@@ -50,7 +50,7 @@ export default function App() {
                 <Link className="btn btn-warning btn-sm" to="/register">
                   Register
                 </Link>
-                {session?.role === "admin" && (
+                {user?.role === "admin" && (
                   <Link
                     className="btn btn-outline-light btn-sm me-2"
                     to="/admin"
