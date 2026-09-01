@@ -1,371 +1,209 @@
-<div id="top"></div>
+# Authentication System
 
-<div align="center">
+Full-stack authentication system built with Node.js, Express, MongoDB and React.
 
-# 🔐 Production Authentication System
+The project focuses on implementing authentication and authorization with access tokens, refresh tokens, token rotation, role-based access control and common backend security measures.
 
-### Secure, token-based authentication architecture built with Node.js, Express, MongoDB and React.
+## Features
 
-A full-stack authentication system designed around **secure session management, refresh token rotation, role-based authorization and defensive backend security practices**.
-
-<br />
-
-[![Node.js](https://img.shields.io/badge/Node.js-20+-339933?style=for-the-badge\&logo=node.js\&logoColor=white)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express-4-000000?style=for-the-badge\&logo=express\&logoColor=white)](https://expressjs.com/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge\&logo=mongodb\&logoColor=white)](https://www.mongodb.com/)
-[![React](https://img.shields.io/badge/React-18+-61DAFB?style=for-the-badge\&logo=react\&logoColor=black)](https://react.dev/)
-[![JWT](https://img.shields.io/badge/JWT-Authentication-black?style=for-the-badge)](https://jwt.io/)
-[![Security](https://img.shields.io/badge/Security-Focused-red?style=for-the-badge)]()
-
-</div>
-
----
-
-## 📌 Overview
-
-Authentication is one of the most security-sensitive parts of a web application.
-
-This project was built to explore and implement a **complete authentication architecture** rather than a simple username/password login flow.
-
-The system handles:
-
-* User registration and authentication
-* Password hashing
-* Access and refresh tokens
+* User registration and login
+* Password hashing with bcrypt
+* JWT access tokens
+* Refresh tokens
 * Refresh token rotation
-* Token revocation
-* HTTP-only cookie storage
+* Refresh token revocation
+* HTTP-only cookies
 * Email verification
 * Password reset
 * Role-based authorization
-* Request validation
+* Request validation with Zod
 * Rate limiting
-* Security headers
-* Protected API routes
+* Security headers with Helmet
+* React frontend
+* Responsive Bootstrap UI
 
-The frontend provides a React-based interface for interacting with the authentication API.
+## Tech Stack
 
----
+### Backend
 
-## 🎯 Project Goals
+* Node.js
+* Express
+* MongoDB
+* Mongoose
 
-The main goal was to understand how authentication systems are designed in real applications and how different security mechanisms work together.
+### Frontend
 
-The project focuses on four areas:
+* React
+* Bootstrap 5
 
-### 🔐 Security
+### Authentication & Security
 
-Protect credentials, sessions and API endpoints against common attack vectors.
+* JWT
+* bcrypt
+* HTTP-only cookies
+* Helmet
+* Express Rate Limit
+* Zod
 
-### 🧩 Authentication Architecture
-
-Separate short-lived access tokens from long-lived refresh tokens and implement token lifecycle management.
-
-### 🏗️ Backend Design
-
-Build a structured REST API with authentication middleware, validation and authorization layers.
-
-### 💻 Full-Stack Integration
-
-Connect the authentication API to a React frontend while keeping authentication state and sensitive tokens properly isolated.
-
----
-
-# 🏗️ Architecture
-
-The application follows a client-server architecture:
-
-```text
-┌──────────────────────────┐
-│       React Client       │
-│                          │
-│  Login / Register        │
-│  Dashboard               │
-│  Password Reset          │
-│  Account Management      │
-└────────────┬─────────────┘
-             │
-             │ HTTP / REST API
-             ▼
-┌──────────────────────────┐
-│      Express Server      │
-│                          │
-│  Routes                  │
-│  Controllers             │
-│  Middleware              │
-│  Authentication          │
-│  Authorization           │
-│  Validation              │
-└────────────┬─────────────┘
-             │
-             ▼
-┌──────────────────────────┐
-│      MongoDB Atlas       │
-│                          │
-│  Users                   │
-│  Refresh Tokens          │
-│  Authentication Data     │
-└──────────────────────────┘
-```
-
-The backend is responsible for authentication and authorization logic, while the React application acts as the client consuming the REST API.
-
----
-
-# 🔑 Authentication Flow
-
-The application uses **short-lived JWT access tokens** together with **refresh tokens**.
-
-### Login
-
-```text
-User
- │
- │ credentials
- ▼
-POST /auth/login
- │
- ├── Validate input
- │
- ├── Find user
- │
- ├── Verify password
- │
- └── Generate tokens
-       │
-       ├── Access Token
-       │
-       └── Refresh Token
-              │
-              ▼
-        HTTP-only Cookie
-```
-
-The access token is used for authenticated API requests, while the refresh token is used to obtain a new access token when the access token expires.
-
----
-
-# 🔄 Refresh Token Rotation
-
-Refresh tokens are not treated as permanent credentials.
-
-When a refresh request is made:
-
-```text
-Client
-  │
-  │ Refresh Token
-  ▼
-POST /auth/refresh
-  │
-  ├── Validate token
-  │
-  ├── Check token state
-  │
-  ├── Revoke old token
-  │
-  └── Issue new tokens
-          │
-          ├── New Access Token
-          └── New Refresh Token
-```
-
-The previous refresh token is invalidated during rotation.
-
-This reduces the lifetime of a compromised refresh token and provides a mechanism for token revocation.
-
----
-
-# 🛡️ Security
-
-Security was a major design consideration throughout the project.
-
-## Password Hashing
-
-Passwords are never stored as plain text.
-
-Passwords are hashed using **bcrypt** before being stored in the database.
-
-```text
-Plain Password
-      │
-      ▼
-   bcrypt
-      │
-      ▼
-Password Hash
-      │
-      ▼
-   MongoDB
-```
-
----
-
-## HTTP-only Cookies
-
-Refresh tokens are stored using **HTTP-only cookies**.
-
-This prevents client-side JavaScript from directly accessing the refresh token through `document.cookie`.
-
-The browser handles the cookie automatically when communicating with the API.
-
----
-
-## JWT Access Tokens
-
-Access tokens are short-lived credentials used to authorize protected API requests.
-
-The server validates the token before allowing access to protected resources.
-
-Example:
-
-```text
-Authorization: Bearer <access-token>
-```
-
----
-
-## Refresh Token Revocation
-
-Refresh tokens can be revoked when necessary.
-
-This is important for scenarios such as:
-
-* User logout
-* Token rotation
-* Suspicious sessions
-* Compromised credentials
-* Session invalidation
-
----
-
-## Rate Limiting
-
-Authentication endpoints are protected using request rate limiting.
-
-This helps reduce the effectiveness of automated attacks such as:
-
-* Brute-force password attempts
-* Credential stuffing
-* Excessive authentication requests
-
----
-
-## Security Headers
-
-The application uses **Helmet** to configure common HTTP security headers.
-
-This provides an additional defensive layer at the HTTP level.
-
----
-
-## Input Validation
-
-Incoming request data is validated before being processed.
-
-The project uses **Zod** for schema-based validation.
-
-This helps prevent malformed or unexpected input from reaching application logic.
-
----
-
-# 👤 Role-Based Authorization
-
-The application supports multiple user roles.
-
-Currently:
-
-```text
-USER
-ADMIN
-```
-
-Authentication answers:
-
-> "Who are you?"
-
-Authorization answers:
-
-> "What are you allowed to do?"
-
-For example, the admin endpoint:
-
-```http
-GET /user/admin/ping
-```
-
-requires the authenticated user to have the appropriate role.
-
-This keeps authentication and authorization as separate concepts within the backend.
-
----
-
-# 📧 Email Verification & Password Reset
-
-The authentication system also supports account recovery and verification workflows.
-
-### Email Verification
-
-```text
-Register
-   │
-   ▼
-Verification Token
-   │
-   ▼
-Email
-   │
-   ▼
-User verifies account
-```
-
-### Password Reset
-
-```text
-Forgot Password
-       │
-       ▼
-Reset Token
-       │
-       ▼
-Email
-       │
-       ▼
-Reset Password
-```
-
-Email functionality can be integrated using:
+### Email
 
 * Nodemailer
 * Resend
 
----
+## Architecture
 
-# 📡 REST API
+The application is split into a React frontend and an Express backend.
 
-## Authentication
+```text
+React Frontend
+      |
+      | REST API
+      v
+Express Backend
+      |
+      +-- Authentication
+      +-- Authorization
+      +-- Validation
+      +-- Security Middleware
+      |
+      v
+MongoDB
+```
+
+The frontend is responsible for the user interface and communicating with the API. Authentication, authorization and security-related logic are handled on the backend.
+
+## Authentication Flow
+
+The application uses short-lived access tokens together with refresh tokens.
+
+```text
+Login
+  |
+  v
+Validate credentials
+  |
+  v
+Generate access token
+  |
+  +----> Access token
+  |
+  +----> Refresh token
+              |
+              v
+        HTTP-only cookie
+```
+
+When the access token expires, the refresh token can be used to obtain a new access token.
+
+## Refresh Token Rotation
+
+Refresh tokens are rotated when they are used.
+
+```text
+Refresh request
+      |
+      v
+Validate refresh token
+      |
+      v
+Revoke old token
+      |
+      v
+Generate new tokens
+```
+
+This allows refresh tokens to be invalidated and limits the lifetime of an individual refresh token.
+
+## Security
+
+### Password hashing
+
+Passwords are hashed with bcrypt before being stored in the database. Plain-text passwords are never stored.
+
+### HTTP-only cookies
+
+Refresh tokens are stored in HTTP-only cookies so they cannot be accessed directly through client-side JavaScript.
+
+### Rate limiting
+
+Rate limiting is applied to help prevent excessive requests to authentication endpoints, including repeated login attempts.
+
+### Security headers
+
+Helmet is used to configure common HTTP security headers.
+
+### Input validation
+
+Request data is validated using Zod before being processed by the application.
+
+## Role-Based Authorization
+
+The application supports two roles:
+
+```text
+user
+admin
+```
+
+Authentication determines the identity of the user, while authorization determines which resources the user can access.
+
+For example, the admin endpoint requires the authenticated user to have the appropriate role.
+
+## Email Verification
+
+After registration, users can verify their email address through a verification link.
+
+```text
+Registration
+     |
+     v
+Verification token
+     |
+     v
+Email
+     |
+     v
+Account verification
+```
+
+## Password Reset
+
+Users can request a password reset if they have forgotten their password.
+
+```text
+Forgot password
+      |
+      v
+Reset token
+      |
+      v
+Email
+      |
+      v
+New password
+```
+
+## API
+
+### Authentication
 
 | Method | Endpoint                | Description                   |
 | ------ | ----------------------- | ----------------------------- |
-| `POST` | `/auth/register`        | Create a new account          |
-| `POST` | `/auth/login`           | Authenticate a user           |
-| `POST` | `/auth/refresh`         | Refresh authentication tokens |
-| `POST` | `/auth/logout`          | End the current session       |
-| `POST` | `/auth/forgot-password` | Request password reset        |
-| `POST` | `/auth/reset-password`  | Reset account password        |
+| POST   | `/auth/register`        | Register a new user           |
+| POST   | `/auth/login`           | Log in                        |
+| POST   | `/auth/refresh`         | Refresh authentication tokens |
+| POST   | `/auth/logout`          | Log out                       |
+| POST   | `/auth/forgot-password` | Request password reset        |
+| POST   | `/auth/reset-password`  | Reset password                |
 
-## User
+### User
 
 | Method | Endpoint           | Description              |
 | ------ | ------------------ | ------------------------ |
-| `GET`  | `/user/me`         | Get authenticated user   |
-| `GET`  | `/user/admin/ping` | Test admin authorization |
+| GET    | `/user/me`         | Get the current user     |
+| GET    | `/user/admin/ping` | Test admin authorization |
 
----
-
-# 🗂️ Project Structure
-
-The project is separated into frontend and backend responsibilities.
+## Project Structure
 
 ```text
 production-auth-system/
@@ -392,83 +230,34 @@ production-auth-system/
 └── package.json
 ```
 
-> The exact structure may evolve as the application grows.
+## Getting Started
 
----
-
-# 🛠️ Technology Stack
-
-## Backend
-
-* **Node.js**
-* **Express**
-* **MongoDB**
-* **Mongoose**
-
-## Frontend
-
-* **React**
-* **Bootstrap 5**
-* Responsive UI
-* Component-based architecture
-
-## Authentication
-
-* **JWT**
-* Access tokens
-* Refresh tokens
-* Refresh token rotation
-* Token revocation
-* HTTP-only cookies
-
-## Security
-
-* **bcrypt**
-* **Helmet**
-* **Express Rate Limit**
-* **Zod**
-* Secure cookie configuration
-
-## Email
-
-* **Nodemailer**
-* **Resend**
-
----
-
-# ⚙️ Getting Started
-
-## 1. Clone the repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Gojkovix/production-auth-system.git
-
 cd production-auth-system
 ```
 
----
+### 2. Install dependencies
 
-## 2. Install dependencies
-
-Install backend dependencies:
+Backend:
 
 ```bash
 cd backend
 npm install
 ```
 
-Install frontend dependencies:
+Frontend:
 
 ```bash
 cd ../frontend
 npm install
 ```
 
----
+### 3. Environment variables
 
-## 3. Configure environment variables
-
-Create a `.env` file inside the backend directory:
+Create a `.env` file in the backend directory:
 
 ```env
 NODE_ENV=development
@@ -480,37 +269,27 @@ JWT_ACCESS_SECRET=your_access_secret
 JWT_REFRESH_SECRET=your_refresh_secret
 ```
 
-If email functionality is enabled, configure the required email provider variables as well.
+Add the required email provider variables if email verification and password reset are enabled.
 
----
-
-## 4. Start the backend
+### 4. Start the backend
 
 ```bash
 cd backend
 npm run dev
 ```
 
-The API will run on the configured port.
+### 5. Start the frontend
 
----
-
-## 5. Start the frontend
-
-In another terminal:
+In a separate terminal:
 
 ```bash
 cd frontend
 npm start
 ```
 
-The React application will then connect to the authentication API.
+## Environment Variables
 
----
-
-# 🔒 Environment Variables
-
-Secrets should never be committed to the repository.
+Secrets should be stored in environment variables and should not be committed to the repository.
 
 Example:
 
@@ -520,196 +299,49 @@ JWT_ACCESS_SECRET=...
 JWT_REFRESH_SECRET=...
 ```
 
-The actual values should remain in environment configuration and should not be exposed to the frontend.
+## Main Design Decisions
 
----
+### Access and refresh tokens
 
-# 🧪 Example Authentication Request
+Access tokens are used for authenticated API requests and have a shorter lifetime.
 
-### Login
+Refresh tokens provide a way to obtain new access tokens without requiring the user to log in again.
 
-```http
-POST /auth/login
-Content-Type: application/json
-```
+### Refresh token rotation
 
-```json
-{
-  "email": "user@example.com",
-  "password": "password123"
-}
-```
+A refresh token is invalidated when it is used to obtain a new token pair. This provides better control over active sessions and makes token revocation possible.
 
-The server validates the credentials and establishes an authenticated session.
+### HTTP-only cookies
 
----
+Refresh tokens are stored in HTTP-only cookies instead of local storage. This prevents client-side JavaScript from directly reading the refresh token.
 
-# 📈 Design Considerations
+### Separate authentication and authorization
 
-Several design decisions were made intentionally.
+Authentication and authorization are handled separately. This makes it possible to add additional roles and permissions without changing the basic authentication flow.
 
-### Why access + refresh tokens?
+## Possible Improvements
 
-Access tokens should have a relatively short lifetime.
+Some areas that could be extended further:
 
-Refresh tokens allow the user to remain authenticated without requiring the user to enter their password again whenever an access token expires.
-
-This provides a balance between:
-
-* Security
-* User experience
-* Session lifetime
-
----
-
-### Why HTTP-only cookies?
-
-Sensitive refresh credentials should not be directly accessible to client-side JavaScript.
-
-HTTP-only cookies reduce the exposure of refresh tokens to certain client-side attacks such as token theft through JavaScript.
-
----
-
-### Why rotate refresh tokens?
-
-A stolen refresh token should not remain useful indefinitely.
-
-Rotation allows the server to invalidate the previous token when a new one is issued.
-
----
-
-### Why separate authentication and authorization?
-
-Authentication identifies the user.
-
-Authorization determines what that user can access.
-
-Keeping these concerns separate makes the system easier to reason about and extend.
-
----
-
-# 🚧 Current Limitations
-
-This project is primarily focused on authentication architecture and security concepts.
-
-Potential improvements include:
-
-* Automated integration tests
-* More comprehensive API documentation
-* Session/device management
-* Centralized logging
-* Monitoring and alerting
-* More granular permissions
-* Improved refresh-token reuse detection
-* CSRF protection depending on deployment architecture
-* Automated security testing
-* Docker-based deployment
-* CI/CD pipeline
-
-These would be natural next steps for a larger production deployment.
-
----
-
-# 🔮 Future Improvements
-
-Possible extensions include:
-
-### Authentication
-
+* Automated unit and integration tests
 * OAuth2 / OpenID Connect
-* Google authentication
-* GitHub authentication
 * Multi-factor authentication
-* Device/session management
+* Session and device management
+* Audit logging
+* Centralized logging and monitoring
+* More granular permissions
+* Docker deployment
+* CI/CD pipeline
+* Automated security testing
 
-### Security
+## Purpose
 
-* Refresh-token reuse detection
-* Account lockout policies
-* Security event logging
-* Suspicious login detection
-* Audit logs
+The project was built to gain a better understanding of authentication systems and backend security.
 
-### Infrastructure
+The main focus was not only getting login and registration working, but understanding how access tokens, refresh tokens, cookies, authorization and security middleware fit together in a full-stack application.
 
-* Docker
-* CI/CD
-* Automated testing
-* Centralized logging
-* Monitoring
+## Author
 
----
+Lan Gojkovič
 
-# 📚 What This Project Demonstrates
-
-This project demonstrates practical experience with:
-
-* REST API design
-* Authentication architecture
-* JWT-based authentication
-* Refresh token lifecycle management
-* Password security
-* Role-based authorization
-* HTTP-only cookies
-* Backend middleware
-* Request validation
-* Rate limiting
-* Security headers
-* MongoDB data modeling
-* React API integration
-* Full-stack application architecture
-
----
-
-# 🎓 Why I Built This
-
-The project was created to gain a deeper understanding of how authentication systems work beyond a basic login form.
-
-Instead of treating authentication as a single endpoint, the project explores the complete lifecycle of an authenticated session:
-
-```text
-Registration
-     ↓
-Email Verification
-     ↓
-Login
-     ↓
-Access Token
-     ↓
-Refresh Token
-     ↓
-Token Rotation
-     ↓
-Authorization
-     ↓
-Logout / Revocation
-```
-
-The goal was to understand the **security and architectural decisions behind authentication**, not simply implement a working login system.
-
----
-
-# 👨‍💻 Author
-
-**Lan Gojkovič**
-
-Computer Science & Web Technologies student
-
-Interested in:
-
-* Software Engineering
-* Backend Development
-* Full-Stack Development
-* Application Security
-* Distributed Systems
-* Cloud Technologies
-
----
-
-<div align="center">
-
-### ⭐ If you find the project useful, consider giving it a star.
-
-[⬆ Back to top](#top)
-
-</div>
+Computer Science and Web Technologies student
